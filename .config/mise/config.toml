@@ -1,0 +1,29 @@
+# ~/.config/mise/config.toml — every runtime and global tool. `make mise`.
+# Replaces nvm, pyenv, pipx, rustup, `npm -g`, `bun -g`, `cargo install`, `go install`.
+[tools]
+node = "24"
+bun = "latest"
+go = "1.26"
+rust = "stable"
+python = "3.11"
+java = "openjdk-21"
+
+"npm:@anthropic-ai/claude-code" = "latest"
+"npm:ccusage" = "latest"
+"npm:promptfoo" = "latest"
+
+"go:github.com/air-verse/air" = "latest"
+"go:github.com/golangci/golangci-lint/v2/cmd/golangci-lint" = "latest"
+"go:github.com/tgvashworth/litprompt" = "latest"
+"go:golang.org/x/tools/cmd/goimports" = "latest"
+"go:gotest.tools/gotestsum" = "latest"
+"go:honnef.co/go/tools/cmd/staticcheck" = "latest"
+
+"pipx:poetry" = "latest"
+"pipx:poethepoet" = "latest"
+"pipx:modal" = "latest"
+
+"cargo:wasm-pack" = "latest"
+"cargo:wasm-bindgen-cli" = "latest"
+"cargo:samply" = "latest"
+"cargo:dotslash" = "latest"

@@ -1,0 +1,2 @@
+# cp ~/.zshrc.local.example ~/.zshrc.local  — gitignored. secrets and per-machine bits live here.
+export ZEALOT_PYLON_TOKEN="pylon_api_..."

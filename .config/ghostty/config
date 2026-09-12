@@ -1,0 +1,44 @@
+# Prismorphism Terminal Theme
+# Glass-first aesthetic: translucent surfaces, muted neutrals,
+# prismatic spectrum as ambient suggestion — never dominant.
+
+font-family = SF Mono
+font-size = 13
+font-thicken = true
+
+# Glass foundation — translucent background with blur
+background = #09090B
+background-opacity = 0.88
+background-blur-radius = 20
+unfocused-split-opacity = 0.7
+
+foreground = #D4D4D8
+cursor-color = #64748B
+cursor-style = block
+selection-background = #27272A
+selection-foreground = #E4E4E7
+split-divider-color = #18181B
+
+scrollback-limit = 50000
+window-padding-x = 12
+window-padding-y = 8
+
+# ANSI Normal — muted, desaturated; structure over spectacle
+palette = 0=#18181B
+palette = 1=#B91C1C
+palette = 2=#15803D
+palette = 3=#A16207
+palette = 4=#1D4ED8
+palette = 5=#7E22CE
+palette = 6=#0E7490
+palette = 7=#71717A
+
+# ANSI Bright — lifted but still restrained
+palette = 8=#3F3F46
+palette = 9=#DC2626
+palette = 10=#16A34A
+palette = 11=#CA8A04
+palette = 12=#2563EB
+palette = 13=#9333EA
+palette = 14=#0891B2
+palette = 15=#A1A1AA

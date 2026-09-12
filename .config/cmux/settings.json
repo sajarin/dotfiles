@@ -1,0 +1,68 @@
+{
+  "$schema": "https://raw.githubusercontent.com/manaflow-ai/cmux/main/web/data/cmux-settings.schema.json",
+  "schemaVersion": 1,
+
+  "app": {
+    "appearance": "dark",
+    "minimalMode": true,
+    "sendAnonymousTelemetry": false,
+    "warnBeforeQuit": true
+  },
+
+  "notifications": {
+    "dockBadge": true,
+    "paneFlash": true,
+    "showInMenuBar": true,
+    "sound": "default",
+    "unreadPaneRing": true
+  },
+
+  "sidebar": {
+    "branchLayout": "vertical",
+    "showBranchDirectory": true,
+    "showLog": true,
+    "showPorts": true,
+    "showProgress": true,
+    "showPullRequests": true,
+    "showSSH": true
+  },
+
+  // Prismorphism workspace colors — muted at rest, prismatic at low opacity
+  "workspaceColors": {
+    "colors": {
+      "Magenta": "#7E22CE",
+      "Cyan": "#0E7490",
+      "Violet": "#4C1D95",
+      "Rose": "#9F1239",
+      "Slate": "#475569",
+      "Steel": "#334155",
+      "Emerald": "#15803D",
+      "Amber": "#92400E",
+      "Sapphire": "#1E40AF",
+      "Zinc": "#27272A",
+      "Stone": "#3F3F46",
+      "Obsidian": "#18181B"
+    },
+    "indicatorStyle": "leftRail",
+    "selectionColor": "#475569"
+  },
+
+  // Sidebar blends into the glass — near-black tint, low opacity
+  "sidebarAppearance": {
+    "darkModeTintColor": "#09090B",
+    "matchTerminalBackground": true,
+    "tintOpacity": 0.12
+  },
+
+  "automation": {
+    "claudeCodeIntegration": true,
+    "socketControlMode": "cmuxOnly"
+  },
+
+  "browser": {
+    "defaultSearchEngine": "google",
+    "interceptTerminalOpenCommandInCmuxBrowser": true,
+    "openTerminalLinksInCmuxBrowser": true,
+    "theme": "dark"
+  }
+}

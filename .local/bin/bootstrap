@@ -1,0 +1,36 @@
+#!/bin/bash
+# bootstrap — converge this machine on github.com/sajarin/dotfiles.
+#
+#   fresh machine:  curl -fsSL https://raw.githubusercontent.com/sajarin/dotfiles/main/.local/bin/bootstrap | bash
+#   afterwards:     bootstrap [make target...]      (pulls, then `make -C ~/.config/bootstrap`)
+#
+# The repo is a bare git repo at ~/.cfg whose worktree is $HOME. Files live in
+# place: no symlinks, no copying. `cfg status` is drift; `cfg add -u` is sync.
+set -euo pipefail
+
+REPO="${DOTFILES_REPO:-https://github.com/sajarin/dotfiles}"
+CFG="$HOME/.cfg"
+cfg() { git --git-dir="$CFG" --work-tree="$HOME" "$@"; }
+
+if [ ! -d "$CFG" ]; then
+    if [ "$(uname)" = Darwin ] && ! xcode-select -p >/dev/null 2>&1; then
+        xcode-select --install
+        echo "Command Line Tools are installing. Re-run this once they finish." >&2
+        exit 1
+    fi
+    git clone --quiet --bare "$REPO" "$CFG"
+    cfg config status.showUntrackedFiles no
+
+    # Anything the repo would overwrite gets moved aside, never deleted.
+    backup="$HOME/.cfg-backup/$(date +%Y%m%d%H%M%S)"
+    cfg ls-tree -r --name-only HEAD | while read -r f; do
+        [ -e "$HOME/$f" ] || [ -L "$HOME/$f" ] || continue
+        mkdir -p "$backup/$(dirname "$f")" && mv "$HOME/$f" "$backup/$f"
+    done
+    cfg checkout
+    [ -d "$backup" ] && echo "Pre-existing files moved to $backup" >&2
+else
+    cfg pull --quiet --ff-only || echo "pull failed (offline?), continuing with local state" >&2
+fi
+
+exec make -C "$HOME/.config/bootstrap" "${@:-all}"

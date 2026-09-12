@@ -1,0 +1,26 @@
+# ~/.Brewfile.extra — opt-in. Databases, graphics/game deps, mobile, big casks.
+brew "postgresql@14", restart_service: :changed
+brew "pgvector"
+brew "llama.cpp"
+brew "tmux"
+brew "xcodegen"
+brew "cocoapods"
+brew "fluid-synth"
+brew "mupen64plus"
+brew "scons"
+brew "glew"
+brew "glm"
+brew "assimp"
+brew "binaryen"
+brew "minizip"
+brew "libxml2"
+brew "poppler"
+brew "zbar"
+brew "chromaprint"
+if OS.mac?
+  tap "skiptools/skip"
+  cask "skip"
+  cask "blender"
+  cask "android-commandlinetools"
+  cask "android-platform-tools"
+end
