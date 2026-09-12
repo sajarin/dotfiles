@@ -39,7 +39,6 @@ Then the manual bits. `make doctor` lists whichever are still missing:
 - `cp ~/.zshrc.local.example ~/.zshrc.local`, fill in `ZEALOT_PYLON_TOKEN`
 - `claude` once per profile to log in (`claude-profile use work; claude`)
 - zealot: `user_id` in `~/Library/Application Support/zealot/config.toml`
-- gmail skill: restore `.age-key.txt`, `credentials.json.age`, `token.json.age` into `~/.claude-profiles/.shared/skills/gmail/`
 - MCP servers: `claude mcp add ...` per profile, then authenticate in `/mcp`
 - optional: `ssh-keygen -t ed25519 && gh ssh-key add ~/.ssh/id_ed25519.pub`
 - 1Password, Raycast, cmux, Ghostty: open once, sign in, grant permissions
@@ -83,7 +82,7 @@ Adding something: a package is one line in `.Brewfile`; a runtime or global CLI 
 
 ## Secrets
 
-Never tracked anywhere: `~/.zshrc.local`, `~/.ssh`, `*/.claude.json`, `~/.config/gh`, `*.age`, `.age-key.txt`. `make doctor` fails if a `KEY=value` entry appears in any profile's `permissions.allow`. That happens when "always allow" is chosen on a Bash command that inlines an env var; `make sync` strips them.
+Never tracked anywhere: `~/.zshrc.local`, `~/.ssh`, `*/.claude.json`, `~/.config/gh`. `make doctor` fails if a `KEY=value` entry appears in any profile's `permissions.allow`. That happens when "always allow" is chosen on a Bash command that inlines an env var; `make sync` strips them.
 
 ## Not carried over from the old machine
 

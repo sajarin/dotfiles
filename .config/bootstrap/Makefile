@@ -44,14 +44,13 @@ private: brew ## sajarin/claude-profiles → ~/.claude-profiles (needs gh auth l
 	@[ -d $(PROFILES)/.git ] || gh repo clone $(PRIVATE) $(PROFILES)
 	git -C $(PROFILES) pull --quiet --ff-only
 
-claude: private mise ## plugins into every profile; gmail skill deps
+claude: private mise ## plugins into every profile
 	@for p in $(PROFILES)/*/; do \
 	    echo "== $$p"; \
 	    while read -r kind arg; do \
 	        [ -n "$$kind" ] && CLAUDE_CONFIG_DIR=$$p claude plugin $$kind $$arg </dev/null || true; \
 	    done < $(HOME)/.config/bootstrap/claude-plugins.txt; \
 	done
-	@cd $(PROFILES)/.shared/skills/gmail && bun install --silent
 
 zealot: mise ## sajarin/zealot: build from source, install binary, sound pack, config
 	@gh auth status >/dev/null 2>&1 || { echo "zealot is a private repo: run 'gh auth login' first"; exit 1; }
