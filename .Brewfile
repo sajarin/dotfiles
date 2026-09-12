@@ -36,4 +36,5 @@ if OS.mac?
   cask "cmux"
   cask "gcloud-cli"
   cask "ngrok"
+  cask "obsidian"
 end
