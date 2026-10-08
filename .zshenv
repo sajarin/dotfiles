@@ -1,2 +1,3 @@
 # ~/.zshenv — every zsh, including non-interactive. PATH only.
-export PATH="$HOME/.local/bin:$HOME/.local/share/mise/shims:$PATH"
+# ~/.bun/bin: `bun add -g` and `bun link` globals (autocode)
+export PATH="$HOME/.local/bin:$HOME/.local/share/mise/shims:$HOME/.bun/bin:$PATH"
