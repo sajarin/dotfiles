@@ -10,15 +10,16 @@ PROFILES := $(HOME)/.claude-profiles
 PRIVATE  := sajarin/claude-profiles
 VIMCONF  := $(CODE)/vim-config
 ZEALOT   := $(CODE)/zealot
+AUTOCODE := $(CODE)/autocode
 BACKUP   := $(HOME)/.cfg-backup/$(shell date +%Y%m%d%H%M%S)
 SNAPSHOT := $(HOME)/Library/Mobile Documents/com~apple~CloudDocs/Backups/machine-backup
 RESTORED := $(HOME)/.local/state/machine-backup/restored
 SECRETS  := [.permissions.allow[]? | select(test("[A-Z_]{3,}="))] | length > 0
 
-.PHONY: all brew brew-extra mise vim private claude restore zealot doctor sync help
+.PHONY: all brew brew-extra mise vim private claude autocode restore zealot doctor sync help
 .DEFAULT_GOAL := help
 
-all: brew mise vim private claude restore zealot ## converge everything
+all: brew mise vim private claude autocode restore zealot ## converge everything
 
 brew: ## Homebrew + ~/.Brewfile
 	@command -v brew >/dev/null || /bin/bash -c "$$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
@@ -54,6 +55,16 @@ claude: private mise ## plugins into every profile
 	    done < $(HOME)/.config/bootstrap/claude-plugins.txt; \
 	done
 
+autocode: private mise ## shihabdider/autocode: bun-linked CLI, /autocode skill + SessionStart hook in every profile
+	@gh auth status >/dev/null 2>&1 || { echo "autocode is a private repo: run 'gh auth login' first"; exit 1; }
+	@[ -d $(AUTOCODE) ] || gh repo clone shihabdider/autocode $(AUTOCODE)
+	git -C $(AUTOCODE) pull --quiet --ff-only
+	cd $(AUTOCODE) && bun install && bun link
+	ln -sfn $(AUTOCODE)/skills/autocode $(PROFILES)/.shared/skills/autocode
+	@for p in $(PROFILES)/*/; do \
+	    CLAUDE_CONFIG_DIR=$$p autocode setup-hooks claude --scope user --format text | grep -E '^- (~|/)|operation' ; \
+	done
+
 restore: private mise ## once: pre-wipe snapshot from iCloud Drive/Backups/machine-backup (private, not in this repo)
 	@[ "$$(uname)" = Darwin ] || { echo "restore: macOS only (iCloud Drive), skipping"; exit 0; }; \
 	if [ -f $(RESTORED) ]; then echo "restore: already done $$(cat $(RESTORED))"; exit 0; fi; \
@@ -78,6 +89,7 @@ doctor: ## converged? non-zero on drift; prints manual todos
 	@ok=1; \
 	brew bundle check --file=$(HOME)/.Brewfile --no-upgrade >/dev/null || { echo "✗ brew: missing packages → make brew"; ok=0; }; \
 	m="$$(mise ls --missing 2>/dev/null)"; [ -z "$$m" ] || { echo "✗ mise: missing tools → make mise"; echo "$$m"; ok=0; }; \
+	command -v autocode >/dev/null || { echo "✗ autocode: not installed → make autocode"; ok=0; }; \
 	[ -L $(HOME)/.vimrc ] || { echo "✗ vim: ~/.vimrc is not a link into vim-config → make vim"; ok=0; }; \
 	s="$$($(CFG) status --short 2>/dev/null)"; [ -z "$$s" ] || { echo "✗ dotfiles: uncommitted drift → make sync"; echo "$$s"; ok=0; }; \
 	if [ -d $(PROFILES)/.git ]; then \

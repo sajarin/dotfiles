@@ -10,6 +10,7 @@ This repo is public and holds only tools and generic config. Everything else is 
 |---|---|---|---|
 | [sajarin/claude-profiles](https://github.com/sajarin/claude-profiles) | private | `~/.claude-profiles` | `make private` |
 | [sajarin/vim-config](https://github.com/sajarin/vim-config) | public | `~/Desktop/Code/vim-config`, `~/.vimrc` symlinks into it | `make vim` |
+| [shihabdider/autocode](https://github.com/shihabdider/autocode) | private | `~/Desktop/Code/autocode`, `bun link`ed CLI, `/autocode` skill + SessionStart hook in every profile | `make autocode` |
 | [sajarin/zealot](https://github.com/sajarin/zealot) | private | `~/Desktop/Code/zealot`, binary in `~/.local/bin` | `make zealot` |
 
 ## Fresh machine
@@ -23,7 +24,7 @@ git --git-dir=$HOME/.cfg config remote.origin.fetch '+refs/heads/*:refs/remotes/
 git --git-dir=$HOME/.cfg fetch && git --git-dir=$HOME/.cfg branch -u origin/main main   #    bare clones have no upstream; cfg pull/push need one
 make -C ~/.config/bootstrap brew                         # 4. Homebrew (sudo password once) + Brewfile
 gh auth login && gh auth setup-git                       # 5. private repos, and git push over https
-make -C ~/.config/bootstrap all                          # 6. mise, vim-config, claude-profiles, plugins, restore, zealot
+make -C ~/.config/bootstrap all                          # 6. mise, vim-config, claude-profiles, plugins, autocode, restore, zealot
 exec zsh                                                 # 7. new shell: PATH, mise, aliases, profile env
 ```
 
@@ -31,12 +32,12 @@ Why this order:
 
 - Step 3 is a plain checkout because a fresh account has nothing that collides. If it refuses, move the named file aside and re-run. Without `showUntrackedFiles no`, every file in `$HOME` shows up as untracked and `make doctor` reports drift.
 - Step 4 before 5 because `gh` comes from the Brewfile.
-- Step 5 before 6 because `make private` and `make zealot` clone private repos. Both check `gh auth status` and say so if you skipped this. `setup-git` routes every https push and pull through the gh token, so an SSH key is optional.
+- Step 5 before 6 because `make private`, `make autocode` and `make zealot` clone private repos. All three check `gh auth status` and say so if you skipped this. `setup-git` routes every https push and pull through the gh token, so an SSH key is optional.
 - Step 6 is long. mise builds the cargo tools from source and zealot compiles in release mode. 15 to 25 minutes.
 - Step 7 because `make` ran under the stock shell; nothing in the rc files was loaded yet.
 - Step 6 includes `make restore` (macOS, once). It waits for `iCloud Drive/Backups/machine-backup` to sync and runs the `restore.sh` there: Claude chats, prompt and shell history, autocode, bun globals. That snapshot is private and lives only in iCloud, never in this repo. Turn on iCloud Drive before step 6, or run `make restore` later.
 
-`curl -fsSL https://raw.githubusercontent.com/sajarin/dotfiles/main/.local/bin/bootstrap | bash` does steps 1 to 3 and then `make all`; run step 5 before it, or `make private claude restore zealot` afterwards.
+`curl -fsSL https://raw.githubusercontent.com/sajarin/dotfiles/main/.local/bin/bootstrap | bash` does steps 1 to 3 and then `make all`; run step 5 before it, or `make private claude autocode restore zealot` afterwards.
 
 Then the manual bits. `make doctor` lists whichever are still missing:
 
@@ -73,7 +74,7 @@ Adding something: a package is one line in `.Brewfile`; a runtime or global CLI 
 ```
 .Brewfile  .Brewfile.extra            packages
 .config/mise/config.toml              node, bun, go, rust, python, java + npm/go/pipx/cargo tools
-.config/bootstrap/Makefile            all brew brew-extra mise vim private claude restore zealot doctor sync help
+.config/bootstrap/Makefile            all brew brew-extra mise vim private claude autocode restore zealot doctor sync help
 .config/bootstrap/claude-plugins.txt  marketplaces + plugins installed into every profile
 .config/claude-profile/               claude-profile.zsh: CLAUDE_CONFIG_DIR switcher (generic, no personal data)
 .config/{ghostty,cmux}/               terminal
