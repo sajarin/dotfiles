@@ -1,5 +1,5 @@
 marketplace add JuliusBrussee/caveman
 install caveman@caveman
-install slack@claude-plugins-official
-install swift-lsp@claude-plugins-official
-install rust-analyzer-lsp@claude-plugins-official
+install slack@anthropic-plugin-directory
+install swift-lsp-anthropics@anthropic-plugin-directory
+install rust-analyzer-lsp@anthropic-plugin-directory
