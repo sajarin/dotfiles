@@ -19,6 +19,8 @@ xcode-select --install                                   # 1. git, make, clang. 
 git clone --bare https://github.com/sajarin/dotfiles ~/.cfg       # 2.
 git --git-dir=$HOME/.cfg --work-tree=$HOME checkout               # 3. tracked files land in place
 git --git-dir=$HOME/.cfg config status.showUntrackedFiles no      #    so `cfg status` ignores the rest of $HOME
+git --git-dir=$HOME/.cfg config remote.origin.fetch '+refs/heads/*:refs/remotes/origin/*'
+git --git-dir=$HOME/.cfg fetch && git --git-dir=$HOME/.cfg branch -u origin/main main   #    bare clones have no upstream; cfg pull/push need one
 make -C ~/.config/bootstrap brew                         # 4. Homebrew (sudo password once) + Brewfile
 gh auth login && gh auth setup-git                       # 5. private repos, and git push over https
 make -C ~/.config/bootstrap all                          # 6. mise, vim-config, claude-profiles, plugins, restore, zealot

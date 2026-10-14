@@ -20,6 +20,10 @@ if [ ! -d "$CFG" ]; then
     fi
     git clone --quiet --bare "$REPO" "$CFG"
     cfg config status.showUntrackedFiles no
+    # A bare clone has no fetch refspec or upstream, so `cfg pull` would fail.
+    cfg config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
+    cfg fetch --quiet origin
+    cfg branch --quiet --set-upstream-to=origin/main main
 
     # Anything the repo would overwrite gets moved aside, never deleted.
     backup="$HOME/.cfg-backup/$(date +%Y%m%d%H%M%S)"
