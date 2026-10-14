@@ -18,6 +18,7 @@ This repo is public and holds only tools and generic config. Everything else is 
 xcode-select --install                                   # 1. git, make, clang. Wait for the dialog to finish.
 git clone --bare https://github.com/sajarin/dotfiles ~/.cfg       # 2.
 git --git-dir=$HOME/.cfg --work-tree=$HOME checkout               # 3. tracked files land in place
+git --git-dir=$HOME/.cfg config status.showUntrackedFiles no      #    so `cfg status` ignores the rest of $HOME
 make -C ~/.config/bootstrap brew                         # 4. Homebrew (sudo password once) + Brewfile
 gh auth login && gh auth setup-git                       # 5. private repos, and git push over https
 make -C ~/.config/bootstrap all                          # 6. mise, vim-config, claude-profiles, plugins, restore, zealot
@@ -26,7 +27,7 @@ exec zsh                                                 # 7. new shell: PATH, m
 
 Why this order:
 
-- Step 3 is a plain checkout because a fresh account has nothing that collides. If it refuses, move the named file aside and re-run.
+- Step 3 is a plain checkout because a fresh account has nothing that collides. If it refuses, move the named file aside and re-run. Without `showUntrackedFiles no`, every file in `$HOME` shows up as untracked and `make doctor` reports drift.
 - Step 4 before 5 because `gh` comes from the Brewfile.
 - Step 5 before 6 because `make private` and `make zealot` clone private repos. Both check `gh auth status` and say so if you skipped this. `setup-git` routes every https push and pull through the gh token, so an SSH key is optional.
 - Step 6 is long. mise builds the cargo tools from source and zealot compiles in release mode. 15 to 25 minutes.
@@ -37,7 +38,7 @@ Why this order:
 
 Then the manual bits. `make doctor` lists whichever are still missing:
 
-- `cp ~/.zshrc.local.example ~/.zshrc.local`, fill in `ZEALOT_PYLON_TOKEN`
+- `cp ~/.zshrc.local.example ~/.zshrc.local`, fill in `ZEALOT_PYLON_TOKEN` (or comment it out until you have one)
 - `claude` once per profile to log in (`claude-profile use work; claude`)
 - zealot: `user_id` in `~/Library/Application Support/zealot/config.toml`
 - MCP servers: after logging in, run `~/.local/state/machine-backup/mcp-add.sh` (written by `make restore`), then authenticate in `/mcp`
