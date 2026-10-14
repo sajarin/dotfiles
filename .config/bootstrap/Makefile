@@ -12,14 +12,12 @@ VIMCONF  := $(CODE)/vim-config
 ZEALOT   := $(CODE)/zealot
 AUTOCODE := $(CODE)/autocode
 BACKUP   := $(HOME)/.cfg-backup/$(shell date +%Y%m%d%H%M%S)
-SNAPSHOT := $(HOME)/Library/Mobile Documents/com~apple~CloudDocs/Backups/machine-backup
-RESTORED := $(HOME)/.local/state/machine-backup/restored
 SECRETS  := [.permissions.allow[]? | select(test("[A-Z_]{3,}="))] | length > 0
 
-.PHONY: all brew brew-extra mise vim private claude autocode restore zealot doctor sync help
+.PHONY: all brew brew-extra mise vim private claude autocode zealot doctor sync help
 .DEFAULT_GOAL := help
 
-all: brew mise vim private claude autocode restore zealot ## converge everything
+all: brew mise vim private claude autocode zealot ## converge everything
 
 brew: ## Homebrew + ~/.Brewfile
 	@command -v brew >/dev/null || /bin/bash -c "$$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
@@ -65,17 +63,6 @@ autocode: private mise ## shihabdider/autocode: bun-linked CLI, /autocode skill 
 	    CLAUDE_CONFIG_DIR=$$p autocode setup-hooks claude --scope user --format text | grep -E '^- (~|/)|operation' ; \
 	done
 
-restore: private mise ## once: pre-wipe snapshot from iCloud Drive/Backups/machine-backup (private, not in this repo)
-	@[ "$$(uname)" = Darwin ] || { echo "restore: macOS only (iCloud Drive), skipping"; exit 0; }; \
-	if [ -f $(RESTORED) ]; then echo "restore: already done $$(cat $(RESTORED))"; exit 0; fi; \
-	brctl download "$(SNAPSHOT)" 2>/dev/null || true; \
-	for i in $$(seq 60); do \
-	    [ -f "$(SNAPSHOT)/restore.sh" ] && break; \
-	    [ $$i = 1 ] && echo "waiting up to 10 min for iCloud Drive/Backups/machine-backup (iCloud Drive must be on)"; \
-	    sleep 10; done; \
-	[ -f "$(SNAPSHOT)/restore.sh" ] || { echo "no snapshot yet: once iCloud Drive syncs, run 'make restore'"; exit 1; }; \
-	bash "$(SNAPSHOT)/restore.sh"
-
 zealot: mise ## sajarin/zealot: build from source, install binary, sound pack, config
 	@gh auth status >/dev/null 2>&1 || { echo "zealot is a private repo: run 'gh auth login' first"; exit 1; }
 	@[ -d $(ZEALOT) ] || gh repo clone sajarin/zealot $(ZEALOT)
@@ -98,7 +85,6 @@ doctor: ## converged? non-zero on drift; prints manual todos
 	else echo "✗ ~/.claude-profiles not cloned → make private"; ok=0; fi; \
 	gh auth status >/dev/null 2>&1 || echo "todo: gh auth login && gh auth setup-git"; \
 	ssh -o BatchMode=yes -o StrictHostKeyChecking=accept-new -T git@github.com 2>&1 | grep -q successfully || echo "todo (optional, https via gh works): ssh-keygen -t ed25519 && gh ssh-key add ~/.ssh/id_ed25519.pub"; \
-	[ "$$(uname)" != Darwin ] || [ -f $(RESTORED) ] || echo "todo: make restore (pre-wipe snapshot from iCloud Drive)"; \
 	[ -r $(HOME)/.zshrc.local ] || echo "todo: cp ~/.zshrc.local.example ~/.zshrc.local (ZEALOT_PYLON_TOKEN)"; \
 	for p in $(PROFILES)/*/; do [ -f $$p.claude.json ] || echo "todo: CLAUDE_CONFIG_DIR=$$p claude  (login)"; done; \
 	[ $$ok = 1 ] && echo "✓ converged"

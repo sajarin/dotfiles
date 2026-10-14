@@ -24,7 +24,7 @@ git --git-dir=$HOME/.cfg config remote.origin.fetch '+refs/heads/*:refs/remotes/
 git --git-dir=$HOME/.cfg fetch && git --git-dir=$HOME/.cfg branch -u origin/main main   #    bare clones have no upstream; cfg pull/push need one
 make -C ~/.config/bootstrap brew                         # 4. Homebrew (sudo password once) + Brewfile
 gh auth login && gh auth setup-git                       # 5. private repos, and git push over https
-make -C ~/.config/bootstrap all                          # 6. mise, vim-config, claude-profiles, plugins, autocode, restore, zealot
+make -C ~/.config/bootstrap all                          # 6. mise, vim-config, claude-profiles, plugins, autocode, zealot
 exec zsh                                                 # 7. new shell: PATH, mise, aliases, profile env
 ```
 
@@ -35,16 +35,15 @@ Why this order:
 - Step 5 before 6 because `make private`, `make autocode` and `make zealot` clone private repos. All three check `gh auth status` and say so if you skipped this. `setup-git` routes every https push and pull through the gh token, so an SSH key is optional.
 - Step 6 is long. mise builds the cargo tools from source and zealot compiles in release mode. 15 to 25 minutes.
 - Step 7 because `make` ran under the stock shell; nothing in the rc files was loaded yet.
-- Step 6 includes `make restore` (macOS, once). It waits for `iCloud Drive/Backups/machine-backup` to sync and runs the `restore.sh` there: Claude chats, prompt and shell history, autocode, bun globals. That snapshot is private and lives only in iCloud, never in this repo. Turn on iCloud Drive before step 6, or run `make restore` later.
 
-`curl -fsSL https://raw.githubusercontent.com/sajarin/dotfiles/main/.local/bin/bootstrap | bash` does steps 1 to 3 and then `make all`; run step 5 before it, or `make private claude autocode restore zealot` afterwards.
+`curl -fsSL https://raw.githubusercontent.com/sajarin/dotfiles/main/.local/bin/bootstrap | bash` does steps 1 to 3 and then `make all`; run step 5 before it, or `make private claude autocode zealot` afterwards.
 
 Then the manual bits. `make doctor` lists whichever are still missing:
 
 - `cp ~/.zshrc.local.example ~/.zshrc.local`, fill in `ZEALOT_PYLON_TOKEN` (or comment it out until you have one)
 - `claude` once per profile to log in (`claude-profile use work; claude`)
 - zealot: `user_id` in `~/Library/Application Support/zealot/config.toml`
-- MCP servers: after logging in, run `~/.local/state/machine-backup/mcp-add.sh` (written by `make restore`), then authenticate in `/mcp`
+- MCP servers: after logging in, `claude mcp add` them per profile (blender in both, zapier in work), then authenticate in `/mcp`
 - optional: `ssh-keygen -t ed25519 && gh ssh-key add ~/.ssh/id_ed25519.pub`
 - 1Password, Raycast, cmux, Ghostty: open once, sign in, grant permissions
 
@@ -74,7 +73,7 @@ Adding something: a package is one line in `.Brewfile`; a runtime or global CLI 
 ```
 .Brewfile  .Brewfile.extra            packages
 .config/mise/config.toml              node, bun, go, rust, python, java + npm/go/pipx/cargo tools
-.config/bootstrap/Makefile            all brew brew-extra mise vim private claude autocode restore zealot doctor sync help
+.config/bootstrap/Makefile            all brew brew-extra mise vim private claude autocode zealot doctor sync help
 .config/bootstrap/claude-plugins.txt  marketplaces + plugins installed into every profile
 .config/claude-profile/               claude-profile.zsh: CLAUDE_CONFIG_DIR switcher (generic, no personal data)
 .config/{ghostty,cmux}/               terminal
@@ -94,6 +93,6 @@ Never tracked anywhere: `~/.zshrc.local`, `~/.ssh`, `*/.claude.json`, `~/.config
 - oh-my-zsh, nvm, pyenv, pipx, rustup, `npm -g` — replaced by mise and a 43-line `.zshrc`
 - tmux + TPM + workmode — cmux does this now
 - job-specific Homebrew taps, Go tools, work repos
-- `dd-cli` binary — work tool, no source repo. (`autocode` comes back through `make restore`.)
+- `dd-cli` binary — work tool, no source repo. (`autocode` comes back through `make autocode`.)
 - Solana toolchain, gcloud from `~/Downloads` — gcloud is a cask now, Solana goes in `.zshrc.local` if needed
 - one-off scripts (`find-available-port`, `icloud-nosync-watch`) and the hand-written `.vimrc` — vim config comes from vim-config now
